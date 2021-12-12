@@ -15,18 +15,13 @@ let ClientStrategy = class ClientStrategy {
         let token = (0, parse_bearer_token_1.default)(request);
         if (token) {
             let datos = this.servicioAutenticacion.validarToken(token);
-            if (datos) {
-                if (datos.data.rol === '6196d4c5f87ca32fac994dfa') {
-                    let perfil = Object.assign({
-                        nombre: datos.data.nombre,
-                        correo: datos.data.correo,
-                        id: datos.data.id
-                    });
-                    return perfil;
-                }
-                else {
-                    throw new rest_1.HttpErrors[401]("Este usuario no tiene permisos para esta acción");
-                }
+            if (datos.data.rol === '6196d4c5f87ca32fac994dfa') {
+                let perfil = Object.assign({
+                    nombre: datos.data.nombre,
+                    correo: datos.data.correo,
+                    id: datos.data.id
+                });
+                return perfil;
             }
             else {
                 throw new rest_1.HttpErrors[401]("El token incluido no es valido.");
