@@ -7,6 +7,7 @@ import {
   get,
   getModelSchemaRef,
 } from '@loopback/rest';
+import {PedidoController} from '.';
 import {
   Pedido,
   Usuario,
@@ -18,7 +19,7 @@ export class PedidoUsuarioController {
     @repository(PedidoRepository)
     public pedidoRepository: PedidoRepository,
   ) { }
-
+    
   @get('/pedidos/{id}/usuario', {
     responses: {
       '200': {

@@ -37,10 +37,10 @@ export class Producto extends Entity {
     type: 'string',
     required: true,
   })
-  descriocion: string;
+  descripcion: string;
   @property({
-    type:'string',
-    required: true,
+    type: 'string',
+    required: false,
   })
   img: string;
   @property({

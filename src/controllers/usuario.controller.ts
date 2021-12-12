@@ -1,63 +1,56 @@
-import { service } from '@loopback/core';
+import {authenticate} from '@loopback/authentication';
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
-  HttpErrors,
+  del, get,
+  getModelSchemaRef, HttpErrors, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
-import {Credenciales, Rol, Usuario} from '../models';
+import {llaves} from '../config/llaves';
+import {Credenciales, Usuario} from '../models';
 import {RolRepository, UsuarioRepository} from '../repositories';
-import { AutenticacionService } from '../services';
-import {llaves} from '../config/llaves'
-import { promises } from 'dns';
+import {AutenticacionService} from '../services';
 const fetch = require('node-fetch');
 
 export class UsuarioController {
   constructor(
     @repository(UsuarioRepository)
-    public usuarioRepository : UsuarioRepository,
+    public usuarioRepository: UsuarioRepository,
     @repository(RolRepository)
-    public rolRepositorio : RolRepository,
+    public rolRepositorio: RolRepository,
     @service(AutenticacionService)
-    public servicioAutentificacion : AutenticacionService
-  ) {}
+    public servicioAutentificacion: AutenticacionService
+  ) { }
 
   //Cambiar contraseña
-
+  @authenticate.skip()
   @put('/cambiarComtrasena')
-  @response(200,{
+  @response(200, {
     description: "Cambiar una contraseña"
   })
-  async cambiarContrasena(@requestBody() credenciales : Credenciales){
+  async cambiarContrasena(@requestBody() credenciales: Credenciales) {
     let usr = await this.servicioAutentificacion.cambiarContrasena(credenciales.usuario);
-    if(usr){
+    if (usr) {
       let nuevaContrasena = this.servicioAutentificacion.generarClave();
       let nuevaContrasenaCifrada = this.servicioAutentificacion.cifradoClave(nuevaContrasena);
 
-      let usuarioActualizado = await this.usuarioRepository.updateById(usr.id,{contrasena: nuevaContrasenaCifrada});
+      let usuarioActualizado = await this.usuarioRepository.updateById(usr.id, {contrasena: nuevaContrasenaCifrada});
       //notificación
       let destino = usr.correo;
       let asunto = 'Registro Eco-Sastreria';
       let contenido = `Hola ${usr.nombre}, su contraseña ahora es ${nuevaContrasena} y su rol es: ${usr.rolId}.`
-      fetch(`${llaves.urlServiciosNotificaciones}/envio-correo?destino=${destino}&asunto=${asunto}&contenido=${contenido}`).then((data:any)=>{
-      console.log(data);
-      return usuarioActualizado;
-    });
-    }else{
+      fetch(`${llaves.urlServiciosNotificaciones}/envio-correo?destino=${destino}&asunto=${asunto}&contenido=${contenido}`).then((data: any) => {
+        console.log(data);
+        return usuarioActualizado;
+      });
+    } else {
       throw new HttpErrors['401']("Usuario no existe")
     }
   }
@@ -65,27 +58,27 @@ export class UsuarioController {
   //identificación de usuario
 
   @post('/identificarUsuario')
-  @response(200,{
+  @response(200, {
     description: "Identificar a un usuario con su rol"
   })
-  async identificarUsuario(@requestBody() credenciales : Credenciales){
+  async identificarUsuario(@requestBody() credenciales: Credenciales) {
     let usr = await this.servicioAutentificacion.identificarUsuario(credenciales.usuario, credenciales.contrasena);
-    if (usr){
+    if (usr) {
       let token = this.servicioAutentificacion.generarTokenJw(usr);
-      return{
-        datos : {
+      return {
+        datos: {
           nombre: usr.nombre,
           correo: usr.correo,
-          id : usr.id,
+          id: usr.id,
           rol: usr.rolId
         },
         tk: token
       }
-    }else{
+    } else {
       throw new HttpErrors['401']("Datos incorrectos")
     }
   }
-  
+
   @post('/usuarios')
   @response(200, {
     description: 'Usuario model instance',
@@ -110,21 +103,21 @@ export class UsuarioController {
     usuario.contrasena = claceCifrada;
     //Esta ruta solo tendra el rol de cliente
     let rol = await this.servicioAutentificacion.ValidarRol('cliente')
-    if(rol){
+    if (rol) {
       usuario.rolId = `${rol.id}`
-      usuario.nombreROl= rol.nombre
-    }else{
-      let nuevoRol= await this.rolRepositorio.create({nombre: `${'cliente'}`})
+      usuario.nombreROl = rol.nombre
+    } else {
+      let nuevoRol = await this.rolRepositorio.create({nombre: `${'cliente'}`})
       usuario.rolId = `${nuevoRol.id}`
-      usuario.nombreROl= nuevoRol.nombre
+      usuario.nombreROl = nuevoRol.nombre
     }
-    let Usr= await this.usuarioRepository.create(usuario);
+    let Usr = await this.usuarioRepository.create(usuario);
     //Notificación Usuario
     let destino = usuario.correo;
     let asunto = 'Registro Eco-Sastreria';
     let contenido = `Hola ${usuario.nombre}, su usuario es: ${usuario.correo}, su contraseña es: ${clave} y su rol es: ${usuario.nombreROl}.
     Bienvenido a eco-satreria`
-    fetch(`${llaves.urlServiciosNotificaciones}/envio-correo?destino=${destino}&asunto=${asunto}&contenido=${contenido}`).then((data:any)=>{
+    fetch(`${llaves.urlServiciosNotificaciones}/envio-correo?destino=${destino}&asunto=${asunto}&contenido=${contenido}`).then((data: any) => {
       console.log(data);
     });
     return usuario;

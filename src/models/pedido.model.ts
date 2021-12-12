@@ -28,7 +28,7 @@ export class Pedido extends Entity {
   confirmacionPedido: boolean;
   @property({
     type: 'boolean',
-    required: true,
+    required: false,
   })
   estado: boolean;
 

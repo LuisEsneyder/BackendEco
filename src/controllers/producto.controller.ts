@@ -5,18 +5,12 @@ import {
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
 import {Producto} from '../models';
 import {ProductoRepository} from '../repositories';
@@ -24,9 +18,9 @@ import {ProductoRepository} from '../repositories';
 export class ProductoController {
   constructor(
     @repository(ProductoRepository)
-    public productoRepository : ProductoRepository,
-  ) {}
-  @authenticate('employ')
+    public productoRepository: ProductoRepository,
+  ) { }
+  @authenticate('admin')
   @post('/productos')
   @response(200, {
     description: 'Producto model instance',
@@ -58,7 +52,7 @@ export class ProductoController {
   ): Promise<Count> {
     return this.productoRepository.count(where);
   }
-
+  @authenticate.skip()
   @get('/productos')
   @response(200, {
     description: 'Array of Producto model instances',
@@ -76,7 +70,7 @@ export class ProductoController {
   ): Promise<Producto[]> {
     return this.productoRepository.find(filter);
   }
- @authenticate('employ')
+  @authenticate('admin')
   @patch('/productos')
   @response(200, {
     description: 'Producto PATCH success count',
@@ -111,7 +105,7 @@ export class ProductoController {
   ): Promise<Producto> {
     return this.productoRepository.findById(id, filter);
   }
- @authenticate('emply')
+  @authenticate('admin')
   @patch('/productos/{id}')
   @response(204, {
     description: 'Producto PATCH success',
@@ -129,7 +123,7 @@ export class ProductoController {
   ): Promise<void> {
     await this.productoRepository.updateById(id, producto);
   }
-  @authenticate('employ')
+  @authenticate('admin')
   @put('/productos/{id}')
   @response(204, {
     description: 'Producto PUT success',
@@ -140,7 +134,6 @@ export class ProductoController {
   ): Promise<void> {
     await this.productoRepository.replaceById(id, producto);
   }
-  @authenticate('employ')
   @del('/productos/{id}')
   @response(204, {
     description: 'Producto DELETE success',

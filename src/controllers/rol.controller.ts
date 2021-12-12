@@ -1,34 +1,27 @@
 import {authenticate} from '@loopback/authentication';
-import { service } from '@loopback/core';
 import {
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
-
 import {Rol} from '../models';
 import {RolRepository} from '../repositories';
+
 
 @authenticate('admin')
 export class RolController {
   constructor(
     @repository(RolRepository)
-    public rolRepository : RolRepository,
-  ) {}
+    public rolRepository: RolRepository,
+  ) { }
 
   @post('/rols')
   @response(200, {
@@ -61,7 +54,7 @@ export class RolController {
   ): Promise<Count> {
     return this.rolRepository.count(where);
   }
-
+  @authenticate.skip()
   @get('/rols')
   @response(200, {
     description: 'Array of Rol model instances',
