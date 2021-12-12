@@ -1,10 +1,9 @@
-import {AuthenticationStrategy} from '@loopback/authentication';
-import {service} from '@loopback/core';
-import {HttpErrors, Request} from '@loopback/rest';
-import {UserProfile} from '@loopback/Security';
-import parseBearerToken from 'parse-bearer-token';
-import {AutenticacionService} from '../services';
-
+import {AuthenticationStrategy} from "@loopback/authentication";
+import {service} from "@loopback/core";
+import {HttpErrors, Request} from "@loopback/rest";
+import {UserProfile} from "@loopback/security";
+import parseBearerToken from "parse-bearer-token";
+import {AutenticacionService} from "../services";
 export class AdminStrategy implements AuthenticationStrategy {
   name: string = 'admin';
 
