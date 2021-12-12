@@ -3,7 +3,6 @@ import {service} from '@loopback/core';
 import {HttpErrors, Request} from '@loopback/rest';
 import {UserProfile} from '@loopback/Security';
 import parseBearerToken from 'parse-bearer-token';
-import {Usuario} from '../models';
 import {AutenticacionService} from '../services';
 
 export class AdminStrategy implements AuthenticationStrategy {
@@ -12,22 +11,22 @@ export class AdminStrategy implements AuthenticationStrategy {
   constructor(
     @service(AutenticacionService)
     public servicioAutenticacion: AutenticacionService,
-  ) {}
+  ) { }
 
   async authenticate(request: Request): Promise<UserProfile | undefined> {
     let token = parseBearerToken(request);
     if (token) {
       let datos = this.servicioAutenticacion.validarToken(token);
       if (datos) {
-        if (datos.data.rol === '619889758db3da310c6db1c2'){
-            let perfil: UserProfile = Object.assign({
-                nombre: datos.data.nombre,
-                correo: datos.data.correo,
-                id: datos.data.id
-              });
-            return perfil;
-        }else{
-            throw new HttpErrors[401]('Este usuario no tiene permisos para esta acción');
+        if (datos.data.rol === '619889758db3da310c6db1c2') {
+          let perfil: UserProfile = Object.assign({
+            nombre: datos.data.nombre,
+            correo: datos.data.correo,
+            id: datos.data.id
+          });
+          return perfil;
+        } else {
+          throw new HttpErrors[401]('Este usuario no tiene permisos para esta acción');
         }
 
       } else {
