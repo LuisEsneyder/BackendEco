@@ -1,7 +1,7 @@
 /// <reference types="express" />
 import { AuthenticationStrategy } from "@loopback/authentication";
 import { Request } from "@loopback/rest";
-import { UserProfile } from '@loopback/Security';
+import { UserProfile } from "@loopback/security";
 import { AutenticacionService } from "../services";
 export declare class EmployeeStrategy implements AuthenticationStrategy {
     servicioAutenticacion: AutenticacionService;

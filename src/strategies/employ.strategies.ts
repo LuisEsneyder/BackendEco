@@ -4,7 +4,7 @@ import {HttpErrors, Request} from "@loopback/rest";
 import {UserProfile} from "@loopback/security";
 import parseBearerToken from "parse-bearer-token";
 import {AutenticacionService} from "../services";
-export class AdminStrategy implements AuthenticationStrategy {
+export class EmployeeStrategy implements AuthenticationStrategy {
     name: string = 'employee';
 
     constructor(

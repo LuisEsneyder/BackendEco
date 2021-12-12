@@ -24,11 +24,11 @@ let ClientStrategy = class ClientStrategy {
                 return perfil;
             }
             else {
-                throw new rest_1.HttpErrors[401]("El token incluido no es valido.");
+                throw new rest_1.HttpErrors[401]('El token incluido no es valido.');
             }
         }
         else {
-            throw new rest_1.HttpErrors[401]("No se ha incluido un token en la solicitud.");
+            throw new rest_1.HttpErrors[401]('No se ha incluido un token en la solicitud.');
         }
     }
 };
