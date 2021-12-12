@@ -16,17 +16,13 @@ export class AdminStrategy implements AuthenticationStrategy {
     let token = parseBearerToken(request);
     if (token) {
       let datos = this.servicioAutenticacion.validarToken(token);
-      if (datos) {
-        if (datos.data.rol === '619889758db3da310c6db1c2') {
-          let perfil: UserProfile = Object.assign({
-            nombre: datos.data.nombre,
-            correo: datos.data.correo,
-            id: datos.data.id
-          });
-          return perfil;
-        } else {
-          throw new HttpErrors[401]('Este usuario no tiene permisos para esta acción');
-        }
+      if (datos.data.rol === '619889758db3da310c6db1c2') {
+        let perfil: UserProfile = Object.assign({
+          nombre: datos.data.nombre,
+          correo: datos.data.correo,
+          id: datos.data.id
+        });
+        return perfil;
 
       } else {
         throw new HttpErrors[401]('El token incluido no es valido.');
